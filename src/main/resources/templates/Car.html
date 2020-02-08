@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+<h1>购物车界面</h1>
+
+<form  action="/order/1" th:action="@{/order/1}" method="post">
+
+    <input type="submit" value="结算" style="width: 50px;height: 20px;font-size: 12px;">
+</form>
+                <!--gouwuche/user_id/goods_Id-->
+<form  action="/gouwuche/1/2" th:action="@{/gouwuche/1/2}" method="post">
+
+    <input type="submit" value="+" style="width: 50px;height: 20px;font-size: 12px;">
+</form>
+
+                    <!--minuseCar/user_id/goods_Id-->
+<form  action="/minuseCar/1/2" th:action="@{/minuseCar/1/2}" method="post">
+
+    <input type="submit" value="-" style="width: 50px;height: 20px;font-size: 12px;">
+</form>
+
+                <!--car_plus/user_id/goods_Id-->
+<form  action="/Onedetermine/1/1" th:action="@{/Onedetermine/1/1}" method="post">
+
+    <input type="submit" value="o" style="width: 50px;height: 20px;font-size: 12px;">
+</form>
+<form  action="/OneDelgoods/1/1" th:action="@{/OneDelgoods/1/1}" method="post">
+
+    <input type="submit" value="x" style="width: 50px;height: 20px;font-size: 12px;">
+</form>
+<form  action="/Count/1" th:action="@{/Count/1}" method="post">
+
+
+    <input type="submit" value="Count" style="width: 50px;height: 20px;font-size: 12px;">
+    <h2>
+        <span th:text="${countMoney}">总金额</span>
+    </h2>
+</form>
+
+
+
+</body>
+</html>

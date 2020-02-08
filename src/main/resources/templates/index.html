@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+主界面
+
+<form  action="/car/1" th:action="@{/car/1}" method="post">
+
+    <input type="submit" value="car" style="width: 50px;height: 20px;font-size: 12px;">
+</form>
+
+<form  action="/show" th:action="@{/show}" method="post">
+
+    <input type="submit" value="show" style="width: 50px;height: 20px;font-size: 12px;">
+</form>
+                <!--plus/user_id/goods_Id/quantity-->
+<form  action="/plus/1/1/4" th:action="@{/plus/1/1/4}" method="post">
+
+    <input type="submit" value="plus" style="width: 50px;height: 20px;font-size: 12px;">
+</form>
+
+<!--goods goods:Allgoods-->
+<h1>
+    <tr th:each="good : ${allgoods}">
+        <td th:text="${good.getGoods_name()}">name:</td>
+        <td th:text="${good.getGoods_price()}">price:</td>
+    </tr>
+</h1>
+
+
+</body>
+</html>
