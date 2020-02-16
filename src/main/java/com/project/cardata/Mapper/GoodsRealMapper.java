@@ -5,6 +5,7 @@ import com.project.cardata.bean.Check;
 import com.project.cardata.bean.goods_real;
 import org.apache.ibatis.annotations.*;
 
+import java.util.List;
 import java.util.Map;
 
 @Mapper
@@ -13,7 +14,7 @@ public interface GoodsRealMapper {
 
     @Options(useGeneratedKeys = true,keyProperty = "goods_rel_id")
     @Select({"select * from goods_rel where car_id=#{car_id}"})
-    public Map<Integer,goods_real> getgoods_real(Integer car_id);
+    public List<goods_real> getgoods_real(Integer car_id);
 
     //查询购物车(car_Id/goods_id)
     //SELECT * FROM goods_rel WHERE goods_id=1 && car_id =1

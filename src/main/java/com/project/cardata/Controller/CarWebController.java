@@ -1,6 +1,7 @@
 package com.project.cardata.Controller;
 
 
+import com.alibaba.fastjson.JSONObject;
 import com.project.cardata.Mapper.CarDataMapper;
 import com.project.cardata.Mapper.GoodsMapper;
 import com.project.cardata.Mapper.GoodsRealMapper;
@@ -12,6 +13,7 @@ import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -29,14 +31,17 @@ public class CarWebController {
      GoodsMapper  goodsMapper;//把goods数据库的mapper注册进来
 
 
+  // @ResponseBody
     @RequestMapping({"/","/index.html"})
-    public String index(ModelMap modelMap){
-        List<goods> Allgoods = goodsMapper.getAllGoods();
+    public Object index(ModelMap modelMap){
+        List<Goods> Allgoods = goodsMapper.getAllGoods();
         modelMap.addAttribute("allgoods",Allgoods);
-        for (goods goods:Allgoods) {
+        for (Goods goods:Allgoods) {
             System.out.println("goods_id"+goods.getGoods_id());
-
         }
+        Object o = JSONObject.toJSON(Allgoods);
+        System.out.println(o);
+
         return "index";
     }
 
@@ -63,8 +68,24 @@ public class CarWebController {
         if (user.getUser_id() > 0)
         {
             System.out.println("User_id"+user.getUser_id());
+            //存放所有商品
+            List<goods_real> Alllist = goodsRealMapper.getgoods_real(car.getCar_id());
+            //转成JSON
+   //         Object AlllistJson = JSONObject.toJSON(Alllist);
+   //         System.out.println(AlllistJson);
+            //将存放的商品信息查出来
+            //建一个商品list
+            List<Goods> AllCarGoods = new ArrayList<Goods>();
+            for (goods_real goods_real:Alllist) {
+                //通过goods_real查询goods_Id查询goods,并加入goods_list
+                AllCarGoods.add(goodsMapper.getGoods( goods_real.getGoods_id()));
+            }
+            Object AllCarGoods_JSON = JSONObject.toJSON(AllCarGoods);
+            System.out.println(AllCarGoods_JSON);
+
             return "Car";
         }
+
         else {
             return "login";
         }
@@ -88,7 +109,7 @@ public class CarWebController {
     @PostMapping(value = "/plus/{user_id}/{goods_id}/{quantity}")
     public String addGoodsReal(@PathVariable("user_id") Integer User_id,@PathVariable("goods_id") Integer goods_id,@PathVariable("quantity") Integer quantity){
 
-        goods goods = goodsMapper.getGoods(goods_id);
+        Goods goods = goodsMapper.getGoods(goods_id);
     try {
         User user = userDataMapper.getUser(User_id);
         try {
@@ -121,6 +142,9 @@ public class CarWebController {
                     Check check = new Check();
                     check.setGoods_id(car.getCar_id());
                     check.setCar_id(goods_id);
+
+
+
                     goods_real goods_real = goodsRealMapper.getgoods_realByTwo(check);
 
                     if(goods_real.getGoods_real_id()!= null) {
@@ -150,7 +174,7 @@ public class CarWebController {
 
                 }finally {
                     //减少商品的库存
-                    goods goods1 = new goods();
+                    Goods goods1 = new Goods();
                     Integer seal =goods.getGoods_sale();//销售量
 //                    goods1 = goodsMapper.getGoods(goods_id);//将该商品存入goods
 //                    goods1.setGoods_num(goods1.getGoods_num()-1);//将库存减一

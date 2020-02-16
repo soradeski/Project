@@ -9,7 +9,7 @@ import org.apache.ibatis.annotations.*;
 public interface CarDataMapper {
 
     //查询购物车
-    @Options(useGeneratedKeys = true,keyProperty = "Car.")
+    @Options(useGeneratedKeys = true,keyProperty = "car_id.")
     @Select({"select * from car where User_id=#{User_id}"})
     public Car getCar(Integer Uer_id);
 

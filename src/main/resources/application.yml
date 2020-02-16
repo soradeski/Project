@@ -10,7 +10,7 @@ spring:
     username: root
     password: cmq521000
     driver-class-name: com.mysql.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/pinxixi
+    url: jdbc:mysql://localhost:3306/pinxixi2
 
     type: com.alibaba.druid.pool.DruidDataSource
 

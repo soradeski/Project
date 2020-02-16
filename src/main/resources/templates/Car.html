@@ -8,32 +8,32 @@
 
 <h1>购物车界面</h1>
 
-<form  action="/order/1" th:action="@{/order/1}" method="post">
+<form  action="/confirmorder/1" th:action="@{/confirmorder/1}" method="post">
 
     <input type="submit" value="结算" style="width: 50px;height: 20px;font-size: 12px;">
 </form>
                 <!--gouwuche/user_id/goods_Id-->
-<form  action="/gouwuche/1/2" th:action="@{/gouwuche/1/2}" method="post">
+<form  action="/gouwuche/2/2" th:action="@{/gouwuche/2/2}" method="post">
 
     <input type="submit" value="+" style="width: 50px;height: 20px;font-size: 12px;">
 </form>
 
                     <!--minuseCar/user_id/goods_Id-->
-<form  action="/minuseCar/1/2" th:action="@{/minuseCar/1/2}" method="post">
+<form  action="/minuseCar/2/2" th:action="@{/minuseCar/2/2}" method="post">
 
     <input type="submit" value="-" style="width: 50px;height: 20px;font-size: 12px;">
 </form>
 
                 <!--car_plus/user_id/goods_Id-->
-<form  action="/Onedetermine/1/1" th:action="@{/Onedetermine/1/1}" method="post">
+<form  action="/Onedetermine/2/2" th:action="@{/Onedetermine/2/2}" method="post">
 
     <input type="submit" value="o" style="width: 50px;height: 20px;font-size: 12px;">
 </form>
-<form  action="/OneDelgoods/1/1" th:action="@{/OneDelgoods/1/1}" method="post">
+<form  action="/OneDelgoods/2/2" th:action="@{/OneDelgoods/2/2}" method="post">
 
     <input type="submit" value="x" style="width: 50px;height: 20px;font-size: 12px;">
 </form>
-<form  action="/Count/1" th:action="@{/Count/1}" method="post">
+<form  action="/Count/2" th:action="@{/Count/2}" method="post">
 
 
     <input type="submit" value="Count" style="width: 50px;height: 20px;font-size: 12px;">
@@ -42,7 +42,15 @@
     </h2>
 </form>
 
+<form  action="/less/2" th:action="@{/less/2}" method="post">
 
+    <input type="submit" value="商品少" style="width: 50px;height: 20px;font-size: 12px;">
+</form>
+
+<form  action="/zero/2" th:action="@{/zero/2}" method="post">
+
+    <input type="submit" value="商品0" style="width: 50px;height: 20px;font-size: 12px;">
+</form>
 
 </body>
 </html>

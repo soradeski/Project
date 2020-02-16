@@ -28,7 +28,7 @@ public class ShowWebController {
 
     @PostMapping("/show/{user_id}/{goods_id}")
     public String AddGoods(@PathVariable("user_id") Integer User_id,@PathVariable("goods_id") Integer goods_id){
-        goods goods = goodsMapper.getGoods(goods_id);
+        Goods goods = goodsMapper.getGoods(goods_id);
         try {
             //判断用户是否登录
             User user = userDataMapper.getUser(User_id);
@@ -54,9 +54,12 @@ public class ShowWebController {
                     //增加到购物车
                     try {
                         Check check = new Check();
-                        check.setGoods_id(car.getCar_id());
-                        check.setCar_id(goods_id);
+                        check.setGoods_id(goods_id);
+                        check.setCar_id(car.getCar_id());
                         goods_real goods_real = goodsRealMapper.getgoods_realByTwo(check);
+                        System.out.println("checkId"+check.getCar_id());
+                        System.out.println("checkGoods_id"+check.getGoods_id());
+
 
                         if(goods_real.getGoods_real_id()!= null) {
                             System.out.println("已经有相同产品");
@@ -85,9 +88,9 @@ public class ShowWebController {
 
                     }finally {
                         //减少商品的库存
-                        goods goods1 = new goods();
+                        Goods goods1 = new Goods();
                         Integer seal =goods.getGoods_sale();//销售量
-                        goods1 = goodsMapper.getGoods(goods_id);//将该商品存入goods
+ //                       goods1 = goodsMapper.getGoods(goods_id);//将该商品存入goods
   //                      goods1.setGoods_num(goods1.getGoods_num()-1);//将库存减一
  //                       goods1.setGoods_sale(seal+1);//更新销售量
   //                      goodsMapper.UpdateCar(goods1);//更新user的库存数据
