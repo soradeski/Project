@@ -10,7 +10,6 @@ import com.project.cardata.Mapper.OrderFinalMapper;
 import com.project.cardata.bean.OrderFinal;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -44,7 +43,7 @@ public class ALiPayController {
     //支付宝同步通知路径,也就是当付款完毕后跳转本项目的页面,可以不是公网地址
     private final String RETURN_URL = "http://localhost:8080/checkpay";
 
-    @GetMapping("/alipay/{order_id}")
+    @RequestMapping("/alipay/{order_id}")
     public void alipay(HttpServletResponse httpResponse, @PathVariable("order_id") Integer order_id) throws IOException {
         orderfinal.setOrder_id(order_id);
         System.out.println(orderfinal.getOrder_id());
@@ -86,7 +85,7 @@ public class ALiPayController {
     }
 
     @RequestMapping(value = "/checkpay")
-    public String returnUrl(HttpServletRequest request, HttpServletResponse response)
+    public Object returnUrl(HttpServletRequest request, HttpServletResponse response)
             throws IOException, AlipayApiException {
         System.out.println("=================================同步回调=====================================");
 

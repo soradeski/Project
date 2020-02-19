@@ -1,5 +1,6 @@
 package com.project.cardata.Controller;
 
+import com.alibaba.fastjson.JSONObject;
 
 import com.project.cardata.Mapper.DataFromCarMapper;
 import com.project.cardata.Mapper.GoodsInformationMapper;
@@ -10,8 +11,8 @@ import com.project.cardata.bean.GoodsInformation;
 import com.project.cardata.bean.OrderFinal;
 import com.project.cardata.server.NetTime;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Iterator;
@@ -34,9 +35,10 @@ public class DataFromCarController {
     Iterator<DataFromCar> datafromcariterator;
     Integer sum;
     Integer discountvalue=60;
+    Object jsonobject;
 
-    private Integer countSum(Integer discount){
-        datafromcarlist=datafromcarmapper.getInitialOrderList();
+    private Integer countSum(Integer discount,Integer user_id){
+        datafromcarlist=datafromcarmapper.getInitialOrderList(user_id);
         datafromcariterator=datafromcarlist.iterator();
         while(datafromcariterator.hasNext()){
             datafromcar=datafromcariterator.next();
@@ -52,8 +54,8 @@ public class DataFromCarController {
                 break;
             }
 
-            sum=sum+goodsinformation.getGoods_num()*goodsinformation.getGoods_price();
-            System.out.println(datafromcar.getGoods_id()+"  "+goodsinformation.getGoods_num()+"  "+sum);
+            sum=sum+datafromcar.getSum()*goodsinformation.getGoods_price();
+            System.out.println(datafromcar.getGoods_id()+"  "+datafromcar.getSum()+"  "+goodsinformation.getGoods_price()+"  "+sum);
         }
         if(discount==1){
             sum=sum-discountvalue;
@@ -63,12 +65,26 @@ public class DataFromCarController {
 
     }
 
-    //订单确认页面
-    @GetMapping("/confirmorder/{user_id}")
-    public void confirmOrderPage(){}
 
-    @GetMapping("/confirmorder/{user_id}/{operation}/{goods_id}/{discount}")//operation为操作码：0为减1为加  discount为优惠券码：0为不使用1为使用
-    public void confirmOrder(@PathVariable("operation") Integer operation,@PathVariable("user_id") Integer user_id,@PathVariable("goods_id") Integer goods_id,@PathVariable("discount") Integer discount){
+    //订单确认页面
+    @RequestMapping("/confirmorder/{user_id}")
+    public Object confirmOrderPage(@PathVariable("user_id") Integer user_id){
+        sum=0;
+        sum=countSum(0,user_id);
+        datafromcarlist=datafromcarmapper.getInitialOrderList(user_id);
+        datafromcariterator=datafromcarlist.iterator();
+        while(datafromcariterator.hasNext()){
+            datafromcar=datafromcariterator.next();
+            goodsinformation.setGoods_id(datafromcar.getGoods_id());
+            goodsinformation=goodsinformationmapper.getInformationByGoods_id(goodsinformation);
+            goodsinformation.setGoods_num(goodsinformation.getGoods_num()-datafromcar.getSum());
+            goodsinformationmapper.updateRepertoryByGoods_id(goodsinformation);
+        }
+        return sum;
+    }
+
+    @RequestMapping("/confirmorder/{user_id}/{operation}/{goods_id}/{discount}")//operation为操作码：0为减1为加  discount为优惠券码：0为不使用1为使用
+    public Object confirmOrder(@PathVariable("user_id") Integer user_id,@PathVariable("operation") Integer operation,@PathVariable("goods_id") Integer goods_id,@PathVariable("discount") Integer discount){
 
         confirmeordertools.setUser_id(user_id);
         confirmeordertools.setGoods_id(goods_id);
@@ -85,7 +101,11 @@ public class DataFromCarController {
                 confirmeordertools.setSum(datafromcar.getSum()+1);
                 datafromcarmapper.updateSumByConfirmOrderTools(confirmeordertools);
                 //计算金额
-                sum=countSum(discount);
+                sum=countSum(discount,user_id);
+                jsonobject=JSONObject.toJSON(sum);
+            }
+            else {
+                jsonobject=JSONObject.toJSON("该商品库存不足,无法添加");
             }
         }
         if(operation==0){
@@ -94,21 +114,24 @@ public class DataFromCarController {
             goodsinformationmapper.updateRepertoryByGoods_id(goodsinformation);
             confirmeordertools.setSum(datafromcar.getSum()-1);
             datafromcarmapper.updateSumByConfirmOrderTools(confirmeordertools);
-            sum=countSum(discount);
+            sum=countSum(discount,user_id);
+            jsonobject=JSONObject.toJSON(sum);
+
         }
+        return jsonobject;
      }
 
      //点击确认订单传入数据库并在数据库生成订单数据
-    @GetMapping("/order")
-    public String createOrderFinal(){
+    @RequestMapping("/order/{user_id}")
+    public Object createOrderFinal(@PathVariable("user_id") Integer user_id){
         OrderFinal orderfinal=new OrderFinal();
 
         StringBuilder goods_id=new StringBuilder();
         NetTime nettime=new NetTime();
 
 
-        datafromcarlist=datafromcarmapper.getInitialOrderList();
-        datafromcarmapper.updateOrderData();
+        datafromcarlist=datafromcarmapper.getInitialOrderList(user_id);
+        //datafromcarmapper.updateOrderData();
 
         datafromcariterator=datafromcarlist.iterator();
         while(datafromcariterator.hasNext()){
@@ -127,7 +150,7 @@ public class DataFromCarController {
         System.out.println("3:"+sum);
 
         try {
-            Thread.sleep(150000);
+            Thread.sleep(90000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -139,7 +162,19 @@ public class DataFromCarController {
             System.out.println("用户超时未付");
             orderfinal.setState(-1);
             orderfinalmapper.updateStateByDateAndUser_id(orderfinal);
-            //orderfinalmapper.deleteOrderFinalByDateAndUser_id(orderfinal);
+            jsonobject= JSONObject.toJSON("用户超时未付");
+            //还原库存
+            System.out.println("订单："+datafromcarlist);
+            datafromcariterator=datafromcarlist.iterator();
+            while(datafromcariterator.hasNext()){
+                //得到orderfinal中的goods_id
+                datafromcar=datafromcariterator.next();
+                goodsinformation.setGoods_id(datafromcar.getGoods_id());
+                goodsinformation=goodsinformationmapper.getInformationByGoods_id(goodsinformation);
+                goodsinformation.setGoods_num(goodsinformation.getGoods_num()+datafromcar.getSum());
+                goodsinformationmapper.updateRepertoryByGoods_id(goodsinformation);
+            }
+            return jsonobject;
         }
         else{
             if(orderfinal.getState()==1){
@@ -163,7 +198,7 @@ public class DataFromCarController {
             }
 
         }
-        return "/alipay";
+        return "";
 
 
     }

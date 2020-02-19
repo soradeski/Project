@@ -11,8 +11,8 @@ import java.util.List;
 
 @Mapper
 public interface DataFromCarMapper {
-    @Select("select * from orders where data='empty'and user_id=${0+2}")
-    public List<DataFromCar> getInitialOrderList();
+    @Select("select * from orders where data='empty'and user_id=#{user_id}")
+    public List<DataFromCar> getInitialOrderList(Integer user_id);
 
     @Select("select * from orders where user_id=#{user_id} and goods_id=#{goods_id} and data='empty'")
     public DataFromCar getSumByConfirmOrderTools(ConfirmOrderTools confirmordertools);

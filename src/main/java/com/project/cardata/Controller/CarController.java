@@ -194,6 +194,15 @@ public class CarController {
       System.out.println("元素："+OderList);
         for (Orders orders:OderList) {
             System.out.println("ordersId"+orders.getGoods_id()+"/"+orders.getSum());
+            //判断对于商品的库存
+            //获得商品库存
+           Integer num= goodsMapper.getGoods(orders.getGoods_id()).getGoods_num() ;
+            if(orders.getSum()> num)
+            {
+                //return orders.getId;
+                System.out.println("有商品超出库存");
+                return "Car";
+            }
             countMoney = countMoney+((goodsMapper.getGoods(orders.getGoods_id()).getGoods_price())*orders.getSum());
 
         } System.out.println("countMoney"+countMoney);
